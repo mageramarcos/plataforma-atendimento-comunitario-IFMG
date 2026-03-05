@@ -1,0 +1,22 @@
+{
+  "name": "plataforma-atendimento-comunitario-ifmg",
+  "version": "1.0.0",
+  "description": "Atividade final integradora - backend da plataforma de atendimento comunitario",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test": "echo \"Sem testes automatizados no momento\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "sqlite3": "^5.1.7"
+  }
+}
