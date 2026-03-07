@@ -4,7 +4,8 @@ const db = conectarBanco();
 
 function buscarUsuarioPorEmail(email) {
   return new Promise((resolve, reject) => {
-    const query = "SELECT id, nome, email, senha_hash, role FROM usuarios WHERE email = ?";
+    const query =
+      "SELECT id, nome, email, senha_hash, role FROM usuarios WHERE email = ?";
 
     db.get(query, [email], (erro, row) => {
       if (erro) {

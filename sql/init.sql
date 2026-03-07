@@ -94,16 +94,3 @@ VALUES
   (3, NULL, 'ABERTO', 3, 'Chamado aberto pelo cidadao'),
   (3, 'ABERTO', 'EM_ATENDIMENTO', 2, 'Equipe deslocada para atendimento'),
   (3, 'EM_ATENDIMENTO', 'CONCLUIDO', 2, 'Ocorrencia finalizada');
-
--- Exemplo de consulta com JOIN para uso nos relatorios
-SELECT
-  c.id AS chamado_id,
-  c.status,
-  c.prioridade,
-  c.data_abertura,
-  c.data_conclusao,
-  cat.nome AS categoria,
-  u.nome AS solicitante
-FROM chamados c
-INNER JOIN categorias cat ON cat.id = c.categoria_id
-INNER JOIN usuarios u ON u.id = c.usuario_id;

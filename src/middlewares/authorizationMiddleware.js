@@ -7,7 +7,9 @@ function authorizeRoles(...rolesPermitidas) {
     const roleAutorizada = rolesPermitidas.includes(req.user.role);
 
     if (!roleAutorizada) {
-      return res.status(403).json({ erro: "Role nao permitida para essa rota" });
+      return res
+        .status(403)
+        .json({ erro: "Role nao permitida para essa rota" });
     }
 
     return next();

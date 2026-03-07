@@ -11,7 +11,14 @@ function normalizarCep(cep) {
   return String(cep).replace(/\D/g, "");
 }
 
-async function abrirChamado({ usuarioId, categoria, descricao, cep, prioridade, status }) {
+async function abrirChamado({
+  usuarioId,
+  categoria,
+  descricao,
+  cep,
+  prioridade,
+  status,
+}) {
   const categoriaNormalizada = normalizarCategoria(categoria);
   const cepNormalizado = normalizarCep(cep);
   const prioridadeNormalizada = prioridade.toUpperCase();
@@ -41,9 +48,8 @@ async function abrirChamado({ usuarioId, categoria, descricao, cep, prioridade, 
     };
   }
 
-  const categoriaEncontrada = await chamadoRepository.buscarCategoriaPorNome(
-    categoriaNormalizada,
-  );
+  const categoriaEncontrada =
+    await chamadoRepository.buscarCategoriaPorNome(categoriaNormalizada);
 
   if (!categoriaEncontrada) {
     return {
