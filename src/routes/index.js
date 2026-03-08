@@ -12,11 +12,25 @@ router.get("/health", healthController.health);
 router.post("/auth/cadastro", authController.cadastro);
 router.post("/auth/login", authController.login);
 router.post("/chamados", authMiddleware, chamadoController.abrirChamado);
+router.patch("/chamados/:id", authMiddleware, chamadoController.atualizarChamado);
+router.delete("/chamados/:id", authMiddleware, chamadoController.removerChamado);
 router.patch(
   "/chamados/:id/status",
   authMiddleware,
   authorizeRoles("admin", "atendente"),
   chamadoController.atualizarStatus,
+);
+router.get(
+  "/relatorios/chamados",
+  authMiddleware,
+  authorizeRoles("admin", "atendente"),
+  chamadoController.relatorio,
+);
+router.get(
+  "/indicadores/chamados",
+  authMiddleware,
+  authorizeRoles("admin", "atendente"),
+  chamadoController.indicadores,
 );
 router.get("/perfil", authMiddleware, apiController.perfil);
 router.get(
