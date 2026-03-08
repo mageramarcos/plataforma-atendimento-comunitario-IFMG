@@ -1,8 +1,14 @@
 const chamadoRepository = require("../repositories/chamadoRepository");
 const viaCepService = require("./viaCepService");
 const ChamadoFactory = require("../models/ChamadoFactory");
+const StatusSubject = require("../models/StatusSubject");
+const HistoricoStatusObserver = require("../observers/HistoricoStatusObserver");
 
 const PRIORIDADES_VALIDAS = ["BAIXA", "MEDIA", "ALTA"];
+const FLUXO_STATUS = {
+  ABERTO: "EM_ATENDIMENTO",
+  EM_ATENDIMENTO: "CONCLUIDO",
+};
 
 async function abrirChamado({
   usuarioId,
@@ -110,6 +116,61 @@ async function abrirChamado({
   };
 }
 
+async function atualizarStatusChamado({
+  chamadoId,
+  novoStatus,
+  mudadoPorUsuarioId,
+  observacao,
+}) {
+  const chamado = await chamadoRepository.buscarChamadoPorId(chamadoId);
+
+  if (!chamado) {
+    return {
+      erro: true,
+      status: 404,
+      mensagem: "Chamado nao encontrado",
+    };
+  }
+
+  const statusAtual = chamado.status;
+  const statusNovoNormalizado = novoStatus.toUpperCase();
+  const proximoStatusEsperado = FLUXO_STATUS[statusAtual];
+
+  if (!proximoStatusEsperado || statusNovoNormalizado !== proximoStatusEsperado) {
+    return {
+      erro: true,
+      status: 400,
+      mensagem: `Fluxo invalido. Permitido: ${statusAtual} -> ${proximoStatusEsperado || "SEM_TRANSICAO"}`,
+    };
+  }
+
+  await chamadoRepository.atualizarStatusChamado({
+    chamadoId,
+    novoStatus: statusNovoNormalizado,
+  });
+
+  const statusSubject = new StatusSubject();
+  statusSubject.addObserver(new HistoricoStatusObserver(chamadoRepository));
+
+  await statusSubject.notificar({
+    chamadoId,
+    statusAnterior: statusAtual,
+    statusNovo: statusNovoNormalizado,
+    mudadoPorUsuarioId,
+    observacao: observacao || "Atualizacao de status",
+  });
+
+  return {
+    erro: false,
+    chamado: {
+      id: chamadoId,
+      statusAnterior: statusAtual,
+      statusAtual: statusNovoNormalizado,
+    },
+  };
+}
+
 module.exports = {
   abrirChamado,
+  atualizarStatusChamado,
 };

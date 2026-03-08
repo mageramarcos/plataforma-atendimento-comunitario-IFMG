@@ -12,6 +12,12 @@ router.get("/health", healthController.health);
 router.post("/auth/cadastro", authController.cadastro);
 router.post("/auth/login", authController.login);
 router.post("/chamados", authMiddleware, chamadoController.abrirChamado);
+router.patch(
+  "/chamados/:id/status",
+  authMiddleware,
+  authorizeRoles("admin", "atendente"),
+  chamadoController.atualizarStatus,
+);
 router.get("/perfil", authMiddleware, apiController.perfil);
 router.get(
   "/painel-atendimento",
