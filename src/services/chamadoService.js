@@ -1,15 +1,8 @@
 const chamadoRepository = require("../repositories/chamadoRepository");
 const viaCepService = require("./viaCepService");
+const ChamadoFactory = require("../models/ChamadoFactory");
 
 const PRIORIDADES_VALIDAS = ["BAIXA", "MEDIA", "ALTA"];
-
-function normalizarCategoria(categoria) {
-  return categoria.trim().toUpperCase().replace(/\s+/g, "_");
-}
-
-function normalizarCep(cep) {
-  return String(cep).replace(/\D/g, "");
-}
 
 async function abrirChamado({
   usuarioId,
@@ -19,10 +12,28 @@ async function abrirChamado({
   prioridade,
   status,
 }) {
-  const categoriaNormalizada = normalizarCategoria(categoria);
-  const cepNormalizado = normalizarCep(cep);
-  const prioridadeNormalizada = prioridade.toUpperCase();
-  const statusFinal = status ? status.toUpperCase() : "ABERTO";
+  let chamadoCriadoPelaFactory;
+
+  try {
+    chamadoCriadoPelaFactory = ChamadoFactory.criar({
+      categoria,
+      descricao,
+      cep,
+      prioridade,
+      status,
+    });
+  } catch (erro) {
+    return {
+      erro: true,
+      status: 400,
+      mensagem: "Tipo de chamado invalido",
+    };
+  }
+
+  const { categoria: categoriaNormalizada, cep: cepNormalizado } =
+    chamadoCriadoPelaFactory;
+  const prioridadeNormalizada = chamadoCriadoPelaFactory.prioridade;
+  const statusFinal = chamadoCriadoPelaFactory.status;
 
   if (cepNormalizado.length !== 8) {
     return {
